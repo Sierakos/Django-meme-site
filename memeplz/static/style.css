@@ -1,0 +1,95 @@
+.navbar {
+    background-color: black;
+}
+
+.content {
+    min-width: 400px;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 50px;
+    color: white;
+}
+
+.content-comments {
+    min-width: 500px;
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
+    color: white;
+}
+
+.comment-content {
+    padding-left: 20px;
+}
+
+.bg-darker {
+    background-color: black;
+}
+
+.container {
+    padding: 5px;
+    color: white;
+}
+
+.row {
+    margin:5px;
+    background-color: #111111;
+    
+}
+
+.col {
+    padding: 5px;
+    margin-left: 5px;
+    text-align: center;
+}
+
+.col:last-child {
+    margin-right: 5px;
+}
+
+.username-style {
+    text-align: left;
+}
+
+.like-style {
+    text-align: left;
+}
+
+.comment-style {
+    text-align: right;
+}
+
+.like-btn {
+    width: 100px;
+}
+
+.like-count{
+    text-align: left;
+    font-weight: 700;
+}
+
+a:link {
+    text-decoration: none;
+    color: white;
+}
+
+a:visited {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    color: red;
+}
+
+.pager {
+    color: white;
+}
+
+.left-column {
+    text-align: right;
+}
+
+.right-column {
+    text-align: left;
+}

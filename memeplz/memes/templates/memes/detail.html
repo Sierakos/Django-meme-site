@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="content">
+    <div class="container mt-5">
+        <div class="row rounded">
+            <div class="col">
+                <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
+            </div>
+            <div class="col col-10 username-style my-auto">
+                <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
+            </div>
+        </div>
+        <div class="row rounded">
+            <div class="col">
+                <h2>{{ post.title }}</h2>
+            </div>
+        </div>
+        <div class="row rounded">
+            <div class="col">
+                <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="520"></a>
+            </div>
+        </div>
+        <div class="row rounded">
+            <div class="col like-style my-auto">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
+                        {% csrf_token %}
+
+                            <button type="submit"
+                            {% if post.pk not in likes %}
+                                class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
+                            {% else %}
+                                class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
+                            {% endif %}>
+                            
+                            {% if post.pk not in likes %}
+                                Like
+                            {% else %}
+                                Unlike
+                            {% endif %}
+
+                            
+
+                        </button> 
+                        
+                    </form>
+                {% else %}
+                    <p>Zaloguj się aby polubić</p>
+                {% endif %}
+            </div>
+            <div class="col my-auto" style="color: gray;">
+                <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
+            </div>
+            <div class="col comment-style my-auto" style="color: gray;">
+                <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
+            </div>
+        </div>
+    
+        <!-- 
+        <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
+    </div>
+</div>
+<hr>
+<div class="content">
+    <div class="row rounded">
+        <div class="col">
+            Napisz komentarz:
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col">
+            <form action="" method="POST" class="my-auto comment-form">
+                {% csrf_token %}
+                {{ form.content }}
+                <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% for comment in comments %}
+    <div class="content-comments">
+        <div class="row rounded">
+            <div class="col">
+                <img src="{{ comment.author.image.url }}" alt="XD" width="50" class="rounded-circle"/>
+            </div>
+            <div class="col col-8 username-style my-auto">
+                {{ comment.author.user.username }}
+            </div>
+            {% if user.is_authenticated %}
+                <div class="col my-auto">
+                    <form action="{% url 'memeplz:like_unlike_comment' pk=comment.pk %}" method="POST" class="like-form-comment my-auto" id="{{ comment.pk }}">
+                        {% csrf_token %}
+                        <button
+                        {% if comment.pk not in liked_comments %}
+                            class="btn btn-success btn-sm like-btn-comment{{comment.pk}}"
+                        {% else %}
+                            class="btn btn-danger btn-sm like-btn-comment{{comment.pk}}"
+                        {% endif %}>
+                        
+                        {% if comment.pk not in liked_comments %}
+                            +
+                        {% else %}
+                            -
+                        {% endif %}
+            
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+            <div class="col my-auto">
+                <span class="like-count-comment like-count-comment{{ comment.pk }}">{{ comment.likes }} </span> polubień
+            </div>
+        </div>
+        <div class="row rounded comment-content">
+            {{ comment.content }}
+        </div>
+    </div>
+    
+{% endfor %}
+
+{% endblock body %}
+
+{% block scripts %}
+    <script>
+        $( document ).ready(function() {
+            $('.like-form').submit(function(e){
+                e.preventDefault()
+                const post_pk = $(this).attr('id')
+                const likeText = $(`.like-btn${post_pk}`).text()
+                const trim = $.trim(likeText)
+                const url = $(this).attr('action')
+                
+                let res;
+                const likes = $(`.like-count${post_pk}`).text()
+                const trimCount = parseInt(likes)
+                
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'post_pk': post_pk,
+                    },
+                    success: function(response) {
+                        if(trim === 'Unlike') {     
+                            $(`.like-btn${post_pk}`).text('Like')
+                            $(`.like-btn${post_pk}`).removeClass('btn-danger')
+                            $(`.like-btn${post_pk}`).addClass('btn-success')
+                            res = trimCount - 1
+                        } else {
+                            $(`.like-btn${post_pk}`).text('Unlike')
+                            $(`.like-btn${post_pk}`).removeClass('btn-success')
+                            $(`.like-btn${post_pk}`).addClass('btn-danger')
+                            res = trimCount + 1
+                        }
+
+                        $(`.like-count${post_pk}`).text(res)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+         });
+         $( document ).ready(function() {
+            $('.like-form-comment').submit(function(e){
+                e.preventDefault()
+                const comment_pk = $(this).attr('id')
+                const likeText = $(`.like-btn-comment${comment_pk}`).text()
+                const trim = $.trim(likeText)
+                const url = $(this).attr('action')
+                
+                let res;
+                const likes = $(`.like-count-comment${comment_pk}`).text()
+                const trimCount = parseInt(likes)
+                
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'comment_pk': comment_pk,
+                    },
+                    success: function(response) {
+                        if(trim === '-') {     
+                            $(`.like-btn-comment${comment_pk}`).text('+')
+                            $(`.like-btn-comment${comment_pk}`).removeClass('btn-danger')
+                            $(`.like-btn-comment${comment_pk}`).addClass('btn-success')
+                            res = trimCount - 1
+                        } else {
+                            $(`.like-btn-comment${comment_pk}`).text('-')
+                            $(`.like-btn-comment${comment_pk}`).removeClass('btn-success')
+                            $(`.like-btn-comment${comment_pk}`).addClass('btn-danger')
+                            res = trimCount + 1
+                        }
+
+                        $(`.like-count-comment${comment_pk}`).text(res)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+        });
+    </script>
+{% endblock scripts %}

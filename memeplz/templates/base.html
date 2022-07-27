@@ -1,0 +1,53 @@
+{% load bootstrap5 %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+</head>
+<body>
+    <style>
+    </style>
+    <div class="card text-center bg-dark">
+        <nav class="navbar navbar-dark navbar-expand fixed-top">
+            <a class="navbar-brand" href="#">Meme Plz!</a>
+            
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{% url 'memeplz:home' %}">Strona główna</a>
+                <a class="nav-item nav-link" href="{% url 'memeplz:waiting' %}">Poczekalnia</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'accounts:my_profile' %}">Profil</a>
+                    <a class="nav-item nav-link" href="{% url 'memeplz:create_post' %}">Dodaj mema</a>
+                    <a class="nav-item nav-link" href="{% url 'accounts:logout' %}">Wyloguj się</a>
+                {% else %}
+                    <a class="nav-item nav-link" href="{% url 'accounts:login' %}">Zaloguj się</a>
+                    <a class="nav-item nav-link" href="{% url 'accounts:register' %}">Zarejestruj się</a>
+                {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        <div class="card-body">
+            {% block body %}
+            {% endblock body %}
+        </div>
+    </div>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

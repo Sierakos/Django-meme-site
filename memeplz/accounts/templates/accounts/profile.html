@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block body %}
+<div class="content">
+    Twój profil: 
+    <div class="row rounded">
+        <div class="col left-column">
+            nazwa: 
+        </div>
+        <div class="col right-column">
+            {{ user.username }} 
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col left-column">
+            email: 
+        </div>
+        <div class="col right-column">
+            {{ user.email }} 
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col left-column">
+            imie:  
+        </div>
+        <div class="col right-column">
+            {{ user.first_name }} 
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col left-column">
+            nazwisko: 
+        </div>
+        <div class="col right-column">
+            {{ user.last_name }} 
+        </div>
+    </div>
+    <div class="row rounded">
+        <img src="{{ user.profile.image.url }}"><br>
+    </div>
+    <div class="row rounded mt-5">
+        <a href="{% url 'accounts:change_profile' %}" class="btn btn-primary">Zmień</a>
+    </div>
+    <hr>
+    
+</div>
+<h2>Twoje posty:</h2><br>
+{% for post in posts %}
+
+<div class="container mt-5">
+    <div class="row rounded">
+        <div class="col">
+            <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
+        </div>
+        <div class="col col-10 username-style my-auto">
+            <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col">
+            <h2>{{ post.title }}</h2>
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col">
+            <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="520"></a>
+        </div>
+    </div>
+    <div class="row rounded">
+        <div class="col like-style my-auto">
+            {% if user.is_authenticated %}
+                <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
+                    {% csrf_token %}
+
+                        <button type="submit"
+                        {% if post.pk not in likes %}
+                            class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
+                        {% else %}
+                            class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
+                        {% endif %}>
+                        
+                        {% if post.pk not in likes %}
+                            Like
+                        {% else %}
+                            Unlike
+                        {% endif %}
+
+                        
+
+                    </button> 
+                    
+                </form>
+            {% else %}
+                <p>Zaloguj się aby polubić</p>
+            {% endif %}
+        </div>
+        <div class="col my-auto" style="color: gray;">
+            <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
+        </div>
+        <div class="col comment-style my-auto" style="color: gray;">
+            <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
+        </div>
+    </div>
+   
+    <!-- 
+    <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
+</div>  
+
+{% endfor %}
+{% endblock body %}
+
+{% block scripts %}
+    <script>
+         $( document ).ready(function() {
+            $('.like-form').submit(function(e){
+                e.preventDefault()
+                const post_pk = $(this).attr('id')
+                const likeText = $(`.like-btn${post_pk}`).text()
+                const trim = $.trim(likeText)
+                const url = $(this).attr('action')
+                
+                let res;
+                const likes = $(`.like-count${post_pk}`).text()
+                const trimCount = parseInt(likes)
+                
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'post_pk': post_pk,
+                    },
+                    success: function(response) {
+                        if(trim === 'Unlike') {     
+                            $(`.like-btn${post_pk}`).text('Like')
+                            $(`.like-btn${post_pk}`).removeClass('btn-danger')
+                            $(`.like-btn${post_pk}`).addClass('btn-success')
+                            res = trimCount - 1
+                        } else {
+                            $(`.like-btn${post_pk}`).text('Unlike')
+                            $(`.like-btn${post_pk}`).removeClass('btn-success')
+                            $(`.like-btn${post_pk}`).addClass('btn-danger')
+                            res = trimCount + 1
+                        }
+
+                        $(`.like-count${post_pk}`).text(res)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+         });
+    </script>
+{% endblock %}
