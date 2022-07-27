@@ -2,10 +2,12 @@
 {% load crispy_forms_tags %}
 
 {% block body %}
-<form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Dodaj</button>
-</form>
+<div class="content">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Dodaj</button>
+    </form>
+</div>
 {% endblock body %}
 

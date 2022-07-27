@@ -18,7 +18,7 @@
         </div>
         <div class="row rounded">
             <div class="col">
-                <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="520"></a>
+                <a><img src="{{ post.image.url }}" width="520"></a>
             </div>
         </div>
         <div class="row rounded">
@@ -70,11 +70,15 @@
     </div>
     <div class="row rounded">
         <div class="col">
+            {% if user.is_authenticated %}
             <form action="" method="POST" class="my-auto comment-form">
                 {% csrf_token %}
                 {{ form.content }}
                 <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
             </form>
+            {% else %}
+            Zaloguj się aby dodać komentarz
+            {% endif %}
         </div>
     </div>
 
@@ -83,7 +87,7 @@
     <div class="content-comments">
         <div class="row rounded">
             <div class="col">
-                <img src="{{ comment.author.image.url }}" alt="XD" width="50" class="rounded-circle"/>
+                <img src="{{ comment.author.image.url }}" alt="XD" width="50" height="50" class="rounded-circle"/>
             </div>
             <div class="col col-8 username-style my-auto">
                 {{ comment.author.user.username }}

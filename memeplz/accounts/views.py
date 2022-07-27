@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -28,15 +28,16 @@ def login_view(request):
     return render(request, 'accounts/login.html', context=context)
 
 def register_view(request):
-    form = RegisterForm()
-    context = {
-        'form': form
-    }
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect(reverse('accounts:login'))
+    else:
+        form = RegisterForm()
+    context = {
+        'form': form
+    }
     return render(request, 'accounts/register.html', context=context)     
 
 @login_required
@@ -46,7 +47,8 @@ def logout_view(request):
 
 @login_required
 def my_profile_view(request):
-    profile = Profile.objects.get(user=request.user)
+    # profile = Profile.objects.get(user=request.user)
+    profile = get_object_or_404(Profile, user=request.user)
     posts = Post.objects.filter(author=request.user.profile)
     context = {
         'profile': profile,
@@ -60,7 +62,8 @@ def my_profile_view(request):
     return render(request, 'accounts/profile.html', context=context)
 
 def profile_view(request, username):
-    profile = Profile.objects.get(user__username=username)
+    # profile = Profile.objects.get(user__username=username)
+    profile = get_object_or_404(Profile, user__username=username)
     posts = Post.objects.filter(author=profile)
     context = {
         'profile': profile,
