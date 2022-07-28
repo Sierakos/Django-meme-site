@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .models import Profile
 from memes.models import Post, LikePost
@@ -10,20 +11,19 @@ from .forms import RegisterForm, LoginForm, ProfileForm
 # Create your views here.
 
 def login_view(request):
-    form = LoginForm()
-    context = {
-        'form': form
-    }
-    valid = True
+    context = {}
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, 'Witaj')
             return redirect(reverse('memeplz:home'))
-        else:
-            valid = False
-            context['valid'] = valid
+    else:
+        form = LoginForm()
+    context = {
+        'form': form
+    }
 
     return render(request, 'accounts/login.html', context=context)
 

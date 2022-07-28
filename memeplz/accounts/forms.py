@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+from django.contrib.auth import authenticate, login, logout
+
 from django import forms
 from .models import Profile
 
@@ -58,19 +60,31 @@ class RegisterForm(UserCreationForm):
         if password1 != password2:
             raise forms.ValidationError("Twoje hasła muszą być takie same")
 
-    
-
-        
-    
-
 class LoginForm(AuthenticationForm):
+    password=forms.CharField(widget=forms.PasswordInput)
     class Meta:
         model = User
         fields = ['username']
 
+    
+
+    def clean(self, *args, **kwargs):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise forms.ValidationError("Hasło lub login jest niepoprawne")
+            if not user.is_active:
+                raise forms.ValidationError("Ten uzytkownik został zablokowany.")
+            return super(LoginForm, self).clean(*args, **kwargs)
+
+    
+
 class ProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=120, required=False)
     last_name = forms.CharField(max_length=120, required=False)
+
     class Meta:
         model = Profile
         field = ['__all__',]

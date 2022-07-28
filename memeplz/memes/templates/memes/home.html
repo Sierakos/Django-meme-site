@@ -7,7 +7,15 @@ home page
 {% block body %}
 
     <div class="content">
-        
+        {% if messages %}
+
+            {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    {{ message }} {{ user.username }}
+                </div>
+            {% endfor %}
+
+        {% endif %}
         {% for post in page_obj %}
             <div class="container mt-5">
                 <div class="row rounded">
@@ -47,8 +55,6 @@ home page
                                         Unlike
                                     {% endif %}
 
-                                    
-        
                                 </button> 
                                 
                             </form>

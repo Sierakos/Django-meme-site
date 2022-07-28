@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    {% bootstrap_messages %}
+    {# {% bootstrap_messages %} #}
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>
         {% block title %}
@@ -18,7 +18,7 @@
     <style>
     </style>
     <div class="card text-center bg-dark">
-        <nav class="navbar navbar-dark navbar-expand fixed-top">
+        <nav class="navbar navbar-dark navbar-expand">
             <a class="navbar-brand" href="{% url 'memeplz:home' %}">Meme Plz!</a>
             
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
