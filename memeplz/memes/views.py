@@ -43,7 +43,6 @@ def home_view_page(request, page):
         ).order_by('-pk')
     paginator = Paginator(posts, 10)
 
-    # page_number = request.GET.get('page')
     page_obj = paginator.get_page(page)
 
     context = {
@@ -67,12 +66,37 @@ def waiting_view(request):
         ).order_by('-pk')
     paginator = Paginator(posts, 10)
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(1)
 
     context = {
         'posts': posts,
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        'next_page': 2,
+        'previous_page': None,
+        'last_page': paginator.num_pages
+    }
+    if request.user.is_authenticated:
+        likes = LikePost.objects.filter(user=request.user)
+        liked_posts = likes.values_list('post', flat=True)
+        context['likes'] = liked_posts
+        context['like'] = likes
+    return render(request, 'memes/waiting.html', context=context)
+
+def waiting_view_page(request, page):
+    posts = Post.objects.filter(
+        created__lte=timezone.now(),
+        is_on_main_page=False,
+        ).order_by('-pk')
+    paginator = Paginator(posts, 10)
+
+    page_obj = paginator.get_page(page)
+
+    context = {
+        'posts': posts,
+        'page_obj': page_obj,
+        'next_page': page+1,
+        'previous_page': page-1,
+        'last_page': paginator.num_pages
     }
     if request.user.is_authenticated:
         likes = LikePost.objects.filter(user=request.user)
@@ -176,3 +200,10 @@ def like_unlike_comment_view(request, pk):
             comment_like.likes += 1
             comment_like.save()
             return redirect(reverse('memeplz:home'))
+
+@login_required
+def delete_meme(request, pk):
+    post = Post.objects.get(pk=pk)
+    if request.method == 'POST':
+        post.delete()
+    return redirect(reverse('accounts:my_profile'))

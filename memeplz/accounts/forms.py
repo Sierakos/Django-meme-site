@@ -82,8 +82,9 @@ class LoginForm(AuthenticationForm):
     
 
 class ProfileForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=120, required=False)
-    last_name = forms.CharField(max_length=120, required=False)
+    first_name = forms.CharField(label='imię', max_length=120, required=False)
+    last_name = forms.CharField(label='nazwisko', max_length=120, required=False)
+    image = forms.ImageField(label='Zdjęcie profilowe', required=False, widget=forms.FileInput)
 
     class Meta:
         model = Profile

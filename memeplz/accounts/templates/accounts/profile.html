@@ -71,6 +71,14 @@ Profile
         </div>
     </div>
     <div class="row rounded">
+        <div class="col">
+            <form action="{% url 'memeplz:delete_meme' pk=post.pk %}" method="POST" class="my-auto">
+                {%csrf_token%}
+                <button type="submit" class="btn btn-danger ">Usuń mema</button>
+            </form>
+        </div>
+    </div>
+    <div class="row rounded">
         <div class="col like-style my-auto">
             {% if user.is_authenticated %}
                 <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
