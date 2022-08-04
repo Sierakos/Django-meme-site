@@ -11,4 +11,5 @@ urlpatterns = [
     path('like_unlike/<int:pk>', views.like_unlike_post_view, name='like_unlike'),
     path('like_unlike_comment/<int:pk>', views.like_unlike_comment_view, name='like_unlike_comment'),
     path('add-meme-to-main-page/<int:pk>', views.add_meme_to_main_page, name='move_meme'),
+    path('str/<int:page>', views.home_view_page, name='home_page')
 ]

@@ -78,15 +78,15 @@ home page
     </p>
     <div class="pager">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; pierwsza</a>
-            <a href="?page={{page_obj.previous_page_number}}">wcześniejsza</a>
+            <a href="{% url 'memeplz:home' %}">&laquo; pierwsza</a>
+            <a href="{% url 'memeplz:home_page' page=previous_page %}">wcześniejsza</a>
         {% endif %}
 
         Strona {{ page_obj.number }} z {{page_obj.paginator.num_pages}}
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">następna</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">ostatnia &raquo;</a>
+            <a href="{% url 'memeplz:home_page' page=next_page %}">następna</a>
+            <a href="{% url 'memeplz:home_page' page=last_page %}">ostatnia &raquo;</a>
         {% endif %}
     </div>
 
