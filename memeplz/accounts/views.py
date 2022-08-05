@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 from .models import Profile
 from memes.models import Post, LikePost
@@ -11,14 +12,16 @@ from .forms import RegisterForm, LoginForm, ProfileForm
 # Create your views here.
 
 def login_view(request):
-    context = {}
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'Witaj')
-            return redirect(reverse('memeplz:home'))
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Witaj')
+                return redirect(reverse('memeplz:home'))
     else:
         form = LoginForm()
     context = {
@@ -102,3 +105,10 @@ def change_profile_view(request):
         
 
     return render(request, 'accounts/change_profile.html', context=context)
+
+@login_required
+def delete_account(request, pk):
+    user = User.objects.get(pk=pk)
+    if request.method == 'POST':
+        user.delete()
+    return redirect(reverse('memeplz:home'))

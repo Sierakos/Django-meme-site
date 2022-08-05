@@ -24,13 +24,16 @@ def pre_save_image(sender, instance, *args, **kwargs):
     Every time user change profile file the previous
     one will be deleted.
     """
-    old_img = instance.__class__.objects.get(id=instance.id).image.path
     try:
-        new_img = instance.image.path
+        old_img = instance.__class__.objects.get(id=instance.id).image.path
+        try:
+            new_img = instance.image.path
+        except:
+            new_img = None
+        if new_img != old_img:
+            import os
+            if os.path.exists(old_img):
+                os.remove(old_img)
     except:
-        new_img = None
-    if new_img != old_img:
-        import os
-        if os.path.exists(old_img):
-            os.remove(old_img)
+        pass
 

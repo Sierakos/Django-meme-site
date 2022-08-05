@@ -11,15 +11,16 @@ import re
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label='Login', 
                 widget=forms.TextInput(attrs={'placeholder': 'Login'}))
-    email = forms.EmailField(error_messages={'invalid': 'Twój email jest nieprawidłowy'})
+    email = forms.EmailField(label='Email',
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
+        error_messages={'invalid': 'Twój email jest nieprawidłowy'})
+    password1 = forms.CharField(label='Hasło',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Hasło'}))
+    password2 = forms.CharField(label='Powtórz hasło',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Powtórz Hasło'}))
 
     def __init__(self, *args, **kwargs):
         super(UserCreationForm, self).__init__(*args, **kwargs)
-
-        # self.fields['username'].label = "Login"
-        # self.fields['email'].label = "Email"
-        # self.fields['password1'].label = "Hasło"
-        # self.fields['password2'].label = "Powtórz hasło"
 
         for fieldname in ['username', 'email', 'password1', 'password2']:
             self.fields[fieldname].help_text = None
@@ -61,12 +62,16 @@ class RegisterForm(UserCreationForm):
             raise forms.ValidationError("Twoje hasła muszą być takie same")
 
 class LoginForm(AuthenticationForm):
-    password=forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label='Login',
+                            widget=forms.TextInput(attrs={'placeholder': 'Login'}),
+                            required=False)
+    password=forms.CharField(label='Hasło',
+                            widget=forms.PasswordInput(attrs={'placeholder': 'Hasło'}),
+                            required=False)
+
     class Meta:
         model = User
         fields = ['username']
-
-    
 
     def clean(self, *args, **kwargs):
         username = self.cleaned_data.get("username")
@@ -75,9 +80,6 @@ class LoginForm(AuthenticationForm):
             user = authenticate(username=username, password=password)
             if not user:
                 raise forms.ValidationError("Hasło lub login jest niepoprawne")
-            if not user.is_active:
-                raise forms.ValidationError("Ten uzytkownik został zablokowany.")
-            return super(LoginForm, self).clean(*args, **kwargs)
 
     
 
