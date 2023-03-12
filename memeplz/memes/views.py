@@ -18,7 +18,7 @@ def home_view(request):
         created__lte=timezone.now(),
         is_on_main_page=True,
         ).order_by('-pk')
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, 1)
 
     page_obj = paginator.get_page(1)
 
@@ -41,7 +41,7 @@ def home_view_page(request, page):
         created__lte=timezone.now(),
         is_on_main_page=True,
         ).order_by('-pk')
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, 1)
 
     page_obj = paginator.get_page(page)
 

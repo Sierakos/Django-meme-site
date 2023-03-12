@@ -4,10 +4,17 @@
 
 {% block body %}
 <div class="content">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary" role="alert" id="id_login_alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <form action="{% url 'accounts:login' %}" method="POST">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary" id="id_button_login">Login</button>
     </form>
 </div>
 {% endblock body %}

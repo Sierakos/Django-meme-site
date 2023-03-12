@@ -22,6 +22,8 @@ def login_view(request):
                 login(request, user)
                 messages.success(request, 'Witaj')
                 return redirect(reverse('memeplz:home'))
+            else:
+                messages.success(request, 'Logowanie nieudane. Sprawdź login lub hasło.')
     else:
         form = LoginForm()
     context = {
@@ -35,9 +37,11 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Rejestracja zakończona pomyślnie. Możesz zalogować się na swoje konto.')
             return redirect(reverse('accounts:login'))
     else:
         form = RegisterForm()
+
     context = {
         'form': form
     }

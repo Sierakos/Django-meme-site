@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-home page
+Śmieszne obrazki
 {% endblock title %}
 
 {% block body %}
@@ -10,7 +10,7 @@ home page
         {% if messages %}
 
             {% for message in messages %}
-                <div class="alert alert-primary" role="alert">
+                <div class="alert alert-primary" role="alert" id="id_login_successful">
                     {{ message }} {{ user.username }}
                 </div>
             {% endfor %}

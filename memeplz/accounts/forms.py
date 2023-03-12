@@ -79,7 +79,8 @@ class LoginForm(AuthenticationForm):
         if username and password:
             user = authenticate(username=username, password=password)
             if not user:
-                raise forms.ValidationError("Hasło lub login jest niepoprawne")
+                # raise forms.ValidationError("Hasło lub login jest niepoprawne")
+                pass
 
     
 
