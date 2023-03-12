@@ -41,8 +41,13 @@ class RegisterForm(UserCreationForm):
         if re.search("[!@#$%^&*(),.?\":{}|<>\\/;'[\]-\]]", username):
             raise forms.ValidationError("Nazwa użytkownika nie może zawierać znaków specjalnych oprócz _ (podłogi)")
 
-
         return username
+    
+    def clean_email(self, *args, **kwargs):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email):
+            raise forms.ValidationError("Użytkownik z tym adresem email już istnieje")
+        return email
 
     def clean_password1(self, *args, **kwargs):
         password1 = self.cleaned_data.get('password1')
