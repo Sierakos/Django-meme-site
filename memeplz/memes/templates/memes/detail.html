@@ -1,128 +1,137 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="content">
-    <div class="container mt-5">
-        <div class="row rounded">
-            <div class="col">
-                <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
+<div class="row" style="background-color: rgba(0, 0, 255, 0);">
+    <div class="content" style="background-color: rgba(0, 0, 255, 0);">
+        <div class="container mt-5" style="background-color: rgba(0, 255, 0, 0);">
+            <div class="row rounded">
+                <div class="col">
+                    <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
+                </div>
+                <div class="col col-10 username-style my-auto">
+                    <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
+                </div>
             </div>
-            <div class="col col-10 username-style my-auto">
-                <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
+            <div class="row rounded">
+                <div class="col">
+                    <h2>{{ post.title }}</h2>
+                </div>
             </div>
-        </div>
-        <div class="row rounded">
-            <div class="col">
-                <h2>{{ post.title }}</h2>
+            <div class="row rounded">
+                <div class="col">
+                    <a><img src="{{ post.image.url }}" width="520"></a>
+                </div>
             </div>
-        </div>
-        <div class="row rounded">
-            <div class="col">
-                <a><img src="{{ post.image.url }}" width="520"></a>
-            </div>
-        </div>
-        <div class="row rounded">
-            <div class="col like-style my-auto">
-                {% if user.is_authenticated %}
-                    <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
-                        {% csrf_token %}
+            <div class="row rounded">
+                <div class="col like-style my-auto">
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
+                            {% csrf_token %}
 
-                            <button type="submit"
-                            {% if post.pk not in likes %}
-                                class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
-                            {% else %}
-                                class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
-                            {% endif %}>
+                                <button type="submit"
+                                {% if post.pk not in likes %}
+                                    class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
+                                {% else %}
+                                    class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
+                                {% endif %}>
+                                
+                                {% if post.pk not in likes %}
+                                    Like
+                                {% else %}
+                                    Unlike
+                                {% endif %}
+
+                                
+
+                            </button> 
                             
-                            {% if post.pk not in likes %}
-                                Like
-                            {% else %}
-                                Unlike
-                            {% endif %}
-
-                            
-
-                        </button> 
-                        
-                    </form>
-                {% else %}
-                    <p>Zaloguj się aby polubić</p>
-                {% endif %}
+                        </form>
+                    {% else %}
+                        <p>Zaloguj się aby polubić</p>
+                    {% endif %}
+                </div>
+                <div class="col my-auto" style="color: gray;">
+                    <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
+                </div>
+                <div class="col comment-style my-auto" style="color: gray;">
+                    <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
+                </div>
             </div>
-            <div class="col my-auto" style="color: gray;">
-                <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
-            </div>
-            <div class="col comment-style my-auto" style="color: gray;">
-                <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
-            </div>
+        
+            <!-- 
+            <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
         </div>
-    
-        <!-- 
-        <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
     </div>
 </div>
 <hr>
-<div class="content">
-    <div class="row rounded">
-        <div class="col">
-            Napisz komentarz:
-        </div>
-    </div>
-    <div class="row rounded">
-        <div class="col">
-            {% if user.is_authenticated %}
-            <form action="" method="POST" class="my-auto comment-form">
-                {% csrf_token %}
-                {{ form.content }}
-                <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
-            </form>
-            {% else %}
-            Zaloguj się aby dodać komentarz
-            {% endif %}
-        </div>
-    </div>
 
-</div>
-{% for comment in comments %}
-    <div class="content-comments">
+    <div class="content">
         <div class="row rounded">
             <div class="col">
-                <img src="{{ comment.author.image.url }}" alt="XD" width="50" height="50" class="rounded-circle"/>
-            </div>
-            <div class="col col-8 username-style my-auto">
-                {{ comment.author.user.username }}
-            </div>
-            {% if user.is_authenticated %}
-                <div class="col my-auto">
-                    <form action="{% url 'memeplz:like_unlike_comment' pk=comment.pk %}" method="POST" class="like-form-comment my-auto" id="{{ comment.pk }}">
-                        {% csrf_token %}
-                        <button
-                        {% if comment.pk not in liked_comments %}
-                            class="btn btn-success btn-sm like-btn-comment{{comment.pk}}"
-                        {% else %}
-                            class="btn btn-danger btn-sm like-btn-comment{{comment.pk}}"
-                        {% endif %}>
-                        
-                        {% if comment.pk not in liked_comments %}
-                            +
-                        {% else %}
-                            -
-                        {% endif %}
-            
-                        </button>
-                    </form>
-                </div>
-            {% endif %}
-            <div class="col my-auto">
-                <span class="like-count-comment like-count-comment{{ comment.pk }}">{{ comment.likes }} </span> polubień
+                Napisz komentarz:
             </div>
         </div>
-        <div class="row rounded comment-content">
-            {{ comment.content }}
+        <div class="row rounded">
+            <div class="col">
+                {% if user.is_authenticated %}
+                <form action="" method="POST" class="my-auto comment-form">
+                    {% csrf_token %}
+                    {{ form.content }}
+                    <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
+                </form>
+                {% else %}
+                Zaloguj się aby dodać komentarz
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    <div class="content" style="background-color: rgba(33, 33, 37, 0.726);">
+        <div class="content-bg">
+    {% for comment in comments %}
+    
+        <div class="content-comments">
+            <div class="row rounded">
+                <div class="col">
+                    <img src="{{ comment.author.image.url }}" alt="XD" width="50" height="50" class="rounded-circle"/>
+                </div>
+                <div class="col col-8 username-style my-auto">
+                    {{ comment.author.user.username }}
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="col my-auto">
+                        <form action="{% url 'memeplz:like_unlike_comment' pk=comment.pk %}" method="POST" class="like-form-comment my-auto" id="{{ comment.pk }}">
+                            {% csrf_token %}
+                            <button
+                            {% if comment.pk not in liked_comments %}
+                                class="btn btn-success btn-sm like-btn-comment{{comment.pk}}"
+                            {% else %}
+                                class="btn btn-danger btn-sm like-btn-comment{{comment.pk}}"
+                            {% endif %}>
+                            
+                            {% if comment.pk not in liked_comments %}
+                                +
+                            {% else %}
+                                -
+                            {% endif %}
+                
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+                <div class="col my-auto">
+                    <span class="like-count-comment like-count-comment{{ comment.pk }}">{{ comment.likes }} </span> polubień
+                </div>
+            </div>
+            <div class="row rounded comment-content">
+                {{ comment.content }}
+            </div>
+        </div>
+    
+
+{% endfor %}
         </div>
     </div>
-    
-{% endfor %}
 
 {% endblock body %}
 

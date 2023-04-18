@@ -11,6 +11,8 @@ from accounts.models import Profile
 
 from .forms import CreatePostForm, CreateCommentForm
 
+from datetime import datetime, timedelta
+
 
 
 def home_view(request):
@@ -18,17 +20,24 @@ def home_view(request):
         created__lte=timezone.now(),
         is_on_main_page=True,
         ).order_by('-pk')
-    paginator = Paginator(posts, 1)
+    paginator = Paginator(posts, 5)
+
+    top_ten_posts = Post.objects.filter(
+        created__gte=timezone.now()-timedelta(days=7)
+    ).order_by('-likes')[:3]
 
     page_obj = paginator.get_page(1)
 
     context = {
         'posts': posts,
+        'top_ten_posts': top_ten_posts,
         'page_obj': page_obj,
         'next_page': 2,
         'previous_page': None,
-        'last_page': paginator.num_pages
+        'last_page': paginator.num_pages,
+        'home_main': True 
     }
+
     if request.user.is_authenticated:
         likes = LikePost.objects.filter(user=request.user)
         liked_posts = likes.values_list('post', flat=True)
@@ -41,7 +50,7 @@ def home_view_page(request, page):
         created__lte=timezone.now(),
         is_on_main_page=True,
         ).order_by('-pk')
-    paginator = Paginator(posts, 1)
+    paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(page)
 
@@ -50,13 +59,17 @@ def home_view_page(request, page):
         'page_obj': page_obj,
         'next_page': page+1,
         'previous_page': page-1,
-        'last_page': paginator.num_pages
+        'last_page': paginator.num_pages,
     }
     if request.user.is_authenticated:
         likes = LikePost.objects.filter(user=request.user)
         liked_posts = likes.values_list('post', flat=True)
         context['likes'] = liked_posts
         context['like'] = likes
+
+    # Return to home (delete str/1 from url) when on first page
+    if page == 1:
+        return redirect(reverse('memeplz:home'))
     return render(request, 'memes/home.html', context=context)
 
 def waiting_view(request):
@@ -64,7 +77,7 @@ def waiting_view(request):
         created__lte=timezone.now(),
         is_on_main_page=False,
         ).order_by('-pk')
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(1)
 
@@ -87,7 +100,7 @@ def waiting_view_page(request, page):
         created__lte=timezone.now(),
         is_on_main_page=False,
         ).order_by('-pk')
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(page)
 

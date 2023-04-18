@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     {# {% bootstrap_messages %} #}
@@ -16,16 +20,19 @@
 </head>
 <body>
     <style>
+        .footer {
+            max-height: 150px;
+        }
     </style>
     <div class="card text-center bg-dark">
-        <nav class="navbar navbar-dark navbar-expand">
+        <!-- <nav class="navbar navbar-dark navbar-expand">
             <a class="navbar-brand" href="{% url 'memeplz:home' %}">Meme Plz!</a>
             
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
+                <div class="navbar-nav navbar-nav-scroll">
                 <a class="nav-item nav-link" href="{% url 'memeplz:home' %}">Strona główna</a>
                 <a class="nav-item nav-link" href="{% url 'memeplz:waiting' %}">Poczekalnia</a>
                 {% if user.is_authenticated %}
@@ -38,15 +45,70 @@
                 {% endif %}
                 </div>
             </div>
-        </nav>
+        </nav> -->
 
-        <div class="card-body">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-darker sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'memeplz:home' %}">Meme Plz!</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                  <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'memeplz:home' %}">Strona główna</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'memeplz:waiting' %}">Poczekalnia</a>
+                  </li>
+                  {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:my_profile' %}">Profil</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'memeplz:create_post' %}">Dodaj mema</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:logout' %}">Wyloguj się</a>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:login' %}">Zaloguj się</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:register' %}">Zarejestruj się</a>
+                  </li>
+                  {% endif %}
+                </ul>
+                    <input type="text" name="daterange" value="01/01/2023 - 01/02/2023" />
+              </div>
+            </div>
+          </nav>
+
+        <div class="card-body" style="background-color: rgba(240, 248, 255, 0);  background-image: url('{% static "bg/tlo.png" %}'); background-attachment: fixed;">
             {% block body %}
             {% endblock body %}
         </div>
     </div>
+
+    <footer class="bg-dark text-center text-light">
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+          © 2023 Copyright: Sebastian Sieradzki
+        </div>
+        <!-- Copyright -->
+      </footer>
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+    <script>
+     $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function(start, end, label) {
+            console.log("A new date selection was made: " + start.format('DD-MM-YYYY') + ' to ' + end.format('DD-MM-YYYY'));
+        });
+    });   
+    </script>
     {% block scripts %}
     {% endblock %}
 </body>

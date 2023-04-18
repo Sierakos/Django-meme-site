@@ -10,6 +10,10 @@
     color: white;
 }
 
+.card-body {
+    min-height: 1000px;
+}
+
 .content-comments {
     min-width: 500px;
     max-width: 800px;
@@ -34,7 +38,6 @@
 .row {
     margin:5px;
     background-color: #111111;
-    
 }
 
 .col {

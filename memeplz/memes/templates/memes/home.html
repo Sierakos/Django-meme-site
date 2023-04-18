@@ -6,76 +6,122 @@
 
 {% block body %}
 
-    <div class="content">
-        {% if messages %}
+    {% if messages %}
 
-            {% for message in messages %}
-                <div class="alert alert-primary" role="alert" id="id_login_successful">
-                    {{ message }} {{ user.username }}
-                </div>
-            {% endfor %}
+    {% for message in messages %}
+        <div class="alert alert-primary" role="alert" id="id_login_successful">
+            {{ message }} {{ user.username }}
+        </div>
+    {% endfor %}
 
-        {% endif %}
-        {% for post in page_obj %}
+    {% endif %}
+    <!--
+        OPTIONS ONLY FOR MAIN PAGE
+    -->
+    {% if home_main == True %}
+    <div class="row" style="background-color: rgba(0, 0, 255, 0);">
+        <div class="col-8">
+    {% endif %}
+        <div class="content">
+            
+                {% for post in page_obj %}
+                    <div class="container mt-5" style="background-color: rgba(0, 0, 255, 0);">
+                        <div class="row rounded">
+                            <div class="col">
+                                <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
+                            </div>
+                            <div class="col col-10 username-style my-auto">
+                                <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
+                            </div>
+                        </div>
+                        <div class="row rounded">
+                            <div class="col">
+                                <h2>{{ post.title }}</h2>
+                            </div>
+                        </div>
+                        <div class="row rounded">
+                            <div class="col">
+                                <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="520"></a>
+                            </div>
+                        </div>
+                        <div class="row rounded">
+                            <div class="col like-style my-auto">
+                                {% if user.is_authenticated %}
+                                    <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
+                                        {% csrf_token %}
+                
+                                            <button type="submit"
+                                            {% if post.pk not in likes %}
+                                                class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
+                                            {% else %}
+                                                class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
+                                            {% endif %}>
+                                            
+                                            {% if post.pk not in likes %}
+                                                Like
+                                            {% else %}
+                                                Unlike
+                                            {% endif %}
+
+                                        </button> 
+                                        
+                                    </form>
+                                {% else %}
+                                    <p>Zaloguj się aby polubić</p>
+                                {% endif %}
+                            </div>
+                            <div class="col my-auto" style="color: gray;">
+                                <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
+                            </div>
+                            <div class="col comment-style my-auto" style="color: gray;">
+                                <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
+                            </div>
+                        </div>
+                    
+                        <!-- 
+                        <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
+                    </div>    
+                {% endfor %}
+
+        <!--
+        OPTIONS ONLY FOR MAIN PAGE
+        -->
+        {% if home_main == True %}        
+            </div>
+        </div>
+        
+
+        <div class="col-4">
             <div class="container mt-5">
-                <div class="row rounded">
-                    <div class="col">
-                        <img src="{{ post.author.image.url }}" width="50" height="50" class="rounded-circle">
-                    </div>
-                    <div class="col col-10 username-style my-auto">
-                        <a href="{% url 'accounts:profile' username=post.author.user.username %}">{{ post.author.user.username }}</a>
-                    </div>
-                </div>
-                <div class="row rounded">
-                    <div class="col">
-                        <h2>{{ post.title }}</h2>
-                    </div>
-                </div>
-                <div class="row rounded">
-                    <div class="col">
-                        <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="520"></a>
-                    </div>
-                </div>
-                <div class="row rounded">
-                    <div class="col like-style my-auto">
-                        {% if user.is_authenticated %}
-                            <form action="{% url 'memeplz:like_unlike' pk=post.pk %}" method="POST" class="like-form my-auto" id="{{post.pk}}">
-                                {% csrf_token %}
-        
-                                    <button type="submit"
-                                    {% if post.pk not in likes %}
-                                        class="like-btn btn btn-success btn-sm like-btn{{post.pk}}"
-                                    {% else %}
-                                        class="like-btn btn btn-danger btn-sm like-btn{{post.pk}}"
-                                    {% endif %}>
-                                    
-                                    {% if post.pk not in likes %}
-                                        Like
-                                    {% else %}
-                                        Unlike
-                                    {% endif %}
+                <h3>Top 3 tygodnia</h3>
+                {% for post in top_ten_posts %}
+                    <div class="container mt-5" style="background-color: rgba(0, 0, 255, 0); max-width: 250px;">
+                        <div class="row rounded">
+                            <div class="col">
+                                <h4>{{ post.title }}</h4>
+                            </div>
+                        </div>
+                        <div class="row rounded">
+                            <div class="col">
+                                <a href="{% url 'memeplz:detail' post.title post.pk %}"><img src="{{ post.image.url }}" width="200"></a>
+                            </div>
+                        </div>
+                        <div class="row rounded">
+                            <div class="col">
+                                <h6>+{{ post.likes }}</h6>
+                            </div>
+                        </div>
+                    
+                        <!-- 
+                        <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
+                    </div>    
+                {% endfor %}
+            </div>
+        </div>
 
-                                </button> 
-                                
-                            </form>
-                        {% else %}
-                            <p>Zaloguj się aby polubić</p>
-                        {% endif %}
-                    </div>
-                    <div class="col my-auto" style="color: gray;">
-                        <span class="like-count like-count{{ post.pk }}">{{ post.likes }} </span> polubień
-                    </div>
-                    <div class="col comment-style my-auto" style="color: gray;">
-                        <span class="comment-count">{{ post.comment_set.count }} komentarzy</span>
-                    </div>
-                </div>
-               
-                <!-- 
-                <div>{{ post.comment_set.count }}</div> komentarzy<br> -->
-            </div>    
-        {% endfor %}
-        
-    </p>
+    </div>
+    {% endif %}
+
     <div class="pager">
         {% if page_obj.has_previous %}
             <a href="{% url 'memeplz:home' %}">&laquo; pierwsza</a>
