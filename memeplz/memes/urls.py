@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -13,5 +13,7 @@ urlpatterns = [
     path('like_unlike/<int:pk>', views.like_unlike_post_view, name='like_unlike'),
     path('like_unlike_comment/<int:pk>', views.like_unlike_comment_view, name='like_unlike_comment'),
     path('add-meme-to-main-page/<int:pk>', views.add_meme_to_main_page, name='move_meme'),
-    path('delete/meme/<int:pk>', views.delete_meme, name='delete_meme')
+    path('delete/meme/<int:pk>', views.delete_meme, name='delete_meme'),
+    # date-picker
+    re_path(r'^filtering-main-site/(?P<page>\d+)/$', views.filtering_main_page, name='filtering_main_site'),
 ]

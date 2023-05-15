@@ -8,6 +8,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     {% bootstrap_css %}
     {% bootstrap_javascript %}
@@ -25,27 +26,6 @@
         }
     </style>
     <div class="card text-center bg-dark">
-        <!-- <nav class="navbar navbar-dark navbar-expand">
-            <a class="navbar-brand" href="{% url 'memeplz:home' %}">Meme Plz!</a>
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav navbar-nav-scroll">
-                <a class="nav-item nav-link" href="{% url 'memeplz:home' %}">Strona główna</a>
-                <a class="nav-item nav-link" href="{% url 'memeplz:waiting' %}">Poczekalnia</a>
-                {% if user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{% url 'accounts:my_profile' %}">Profil</a>
-                    <a class="nav-item nav-link" href="{% url 'memeplz:create_post' %}">Dodaj mema</a>
-                    <a class="nav-item nav-link" href="{% url 'accounts:logout' %}">Wyloguj się</a>
-                {% else %}
-                    <a class="nav-item nav-link" href="{% url 'accounts:login' %}">Zaloguj się</a>
-                    <a class="nav-item nav-link" href="{% url 'accounts:register' %}">Zarejestruj się</a>
-                {% endif %}
-                </div>
-            </div>
-        </nav> -->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-darker sticky-top">
             <div class="container-fluid">
@@ -101,14 +81,47 @@
     
     <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
     <script>
-     $(function() {
-        $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
-        }, function(start, end, label) {
-            console.log("A new date selection was made: " + start.format('DD-MM-YYYY') + ' to ' + end.format('DD-MM-YYYY'));
-        });
-    });   
-    </script>
+      $(function() {
+          $('input[name="daterange"]').daterangepicker({
+              opens: 'left'
+          }, function(start, end, label) {
+              console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+          }).on('apply.daterangepicker', function() {
+              var dateRange = $('input[name="daterange"]').val().split(' - ');
+              var start_date = moment(dateRange[0], 'MM/DD/YYYY').format('YYYY-MM-DD');
+              var end_date = moment(dateRange[1], 'MM/DD/YYYY').format('YYYY-MM-DD');
+      
+              // Sprawdź, czy daty są ważne
+              if (!moment(start_date, 'YYYY-MM-DD').isValid() || !moment(end_date, 'YYYY-MM-DD').isValid()) {
+                  console.log("Nieprawidłowa data!");
+                  return;
+              }
+      
+              var redirect_url = '/filtering-main-site/1?start_date=' + start_date + '&end_date=' + end_date;
+              window.location.href = redirect_url;
+          });
+      });   
+      </script>
+    <!-- <script>
+      $(function() {
+          $('input[name="daterange"]').daterangepicker({
+              opens: 'left'
+          }, function(start, end, label) {
+              console.log("A new date selection was made: " + start.format('DD-MM-YYYY') + ' to ' + end.format('DD-MM-YYYY'));
+          }).on('apply.daterangepicker', function() {
+              var dateRange = $('input[name="daterange"]').val().split(' - ');
+              var start_date = formatDate(dateRange[0]);
+              var end_date = formatDate(dateRange[1]);
+              var redirect_url = '/filtering-main-site/1/?start_date=' + start_date + '&end_date=' + end_date;
+              window.location.href = redirect_url;
+          });
+      
+          function formatDate(dateString) {
+              var dateParts = dateString.split('-');
+              return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+          }
+      });   
+      </script> -->
     {% block scripts %}
     {% endblock %}
 </body>

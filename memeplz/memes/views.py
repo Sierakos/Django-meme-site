@@ -13,6 +13,9 @@ from .forms import CreatePostForm, CreateCommentForm
 
 from datetime import datetime, timedelta
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 def home_view(request):
@@ -71,6 +74,42 @@ def home_view_page(request, page):
     if page == 1:
         return redirect(reverse('memeplz:home'))
     return render(request, 'memes/home.html', context=context)
+
+def filtering_main_page(request, page):
+    if request.method == "GET":
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        posts = Post.objects.filter(
+            # created__gte=start_date(),
+            # created__lte=end_date(),
+            created__range=(start_date, end_date),
+            is_on_main_page=True,
+            ).order_by('-likes')
+        paginator = Paginator(posts, 1)
+
+        page_obj = paginator.get_page(page)
+
+        context = {
+            'posts': posts,
+            'page_obj': page_obj,
+            'next_page': str(int(page) +1),
+            'previous_page': str(int(page) -1),
+            'last_page': paginator.num_pages,
+            'start_date': start_date,
+            'end_date': end_date
+        }
+        if request.user.is_authenticated:
+            likes = LikePost.objects.filter(user=request.user)
+            liked_posts = likes.values_list('post', flat=True)
+            context['likes'] = liked_posts
+            context['like'] = likes
+
+        print(start_date)
+        print(end_date)
+
+
+        return render(request, 'memes/home_filter.html', context=context)
 
 def waiting_view(request):
     posts = Post.objects.filter(
