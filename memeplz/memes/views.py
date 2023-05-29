@@ -22,7 +22,7 @@ def home_view(request):
     posts = Post.objects.filter(
         created__lte=timezone.now(),
         is_on_main_page=True,
-        ).order_by('-pk')
+        ).order_by('-created')
     paginator = Paginator(posts, 5)
 
     top_ten_posts = Post.objects.filter(
@@ -52,7 +52,7 @@ def home_view_page(request, page):
     posts = Post.objects.filter(
         created__lte=timezone.now(),
         is_on_main_page=True,
-        ).order_by('-pk')
+        ).order_by('-created')
     paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(page)
@@ -74,6 +74,33 @@ def home_view_page(request, page):
     if page == 1:
         return redirect(reverse('memeplz:home'))
     return render(request, 'memes/home.html', context=context)
+
+def search_view(request, name, page):
+    posts = Post.objects.filter(
+            # created__gte=start_date(),
+            # created__lte=end_date(),
+            title__contains=name,
+            is_on_main_page=True,
+            ).order_by('-likes')
+
+    paginator = Paginator(posts, 5)
+
+    page_obj = paginator.get_page(page)
+
+    context = {
+        'posts': posts,
+        'page_obj': page_obj,
+        'next_page': page+1,
+        'previous_page': page-1,
+        'last_page': paginator.num_pages,
+    }
+    if request.user.is_authenticated:
+        likes = LikePost.objects.filter(user=request.user)
+        liked_posts = likes.values_list('post', flat=True)
+        context['likes'] = liked_posts
+        context['like'] = likes
+
+    return render(request, 'memes/search.html', context=context)
 
 def filtering_main_page(request, page):
     if request.method == "GET":
@@ -115,7 +142,7 @@ def waiting_view(request):
     posts = Post.objects.filter(
         created__lte=timezone.now(),
         is_on_main_page=False,
-        ).order_by('-pk')
+        ).order_by('-created')
     paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(1)
@@ -138,7 +165,7 @@ def waiting_view_page(request, page):
     posts = Post.objects.filter(
         created__lte=timezone.now(),
         is_on_main_page=False,
-        ).order_by('-pk')
+        ).order_by('-created')
     paginator = Paginator(posts, 5)
 
     page_obj = paginator.get_page(page)

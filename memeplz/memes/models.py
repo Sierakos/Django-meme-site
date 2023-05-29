@@ -8,7 +8,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100, blank=False, null=False)
     image = models.ImageField(upload_to="meme_images")
     likes = models.PositiveIntegerField(default=0)
-    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     is_on_main_page = models.BooleanField(default=False)
 
     def __str__(self):
