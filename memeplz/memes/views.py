@@ -19,11 +19,22 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 def home_view(request):
-    posts = Post.objects.filter(
-        created__lte=timezone.now(),
-        is_on_main_page=True,
-        ).order_by('-created')
-    paginator = Paginator(posts, 5)
+
+    search_post = request.GET.get('search')
+
+    if search_post:
+        posts = Post.objects.filter(
+            title__icontains=search_post,
+            created__lte=timezone.now(),
+            is_on_main_page=True,
+            ).order_by('-created')
+        paginator = Paginator(posts, 500)
+    else:
+        posts = Post.objects.filter(
+            created__lte=timezone.now(),
+            is_on_main_page=True,
+            ).order_by('-created')
+        paginator = Paginator(posts, 5)
 
     top_ten_posts = Post.objects.filter(
         created__gte=timezone.now()-timedelta(days=7)

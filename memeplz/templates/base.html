@@ -30,7 +30,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-darker sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'memeplz:home' %}">
-                  <img src="{% static 'logo/logo.png' %}" alt="" width="100" height="50">
+                  <img src="{% static 'logo/logo.png' %}" alt="" width="70" height="30">
                 </a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -62,7 +62,11 @@
                   </li>
                   {% endif %}
                 </ul>
-                    <input type="text" name="daterange" value="01/01/2023 - 01/02/2023" />
+                  <form class="form-inline search-form" action="{% url 'memeplz:home' %}">
+                    <input class="form-control mr-sm-2 search-input" type="search" placeholder="Search" aria-label="Search" name="search">
+                    <button class="btn btn-outline-success my-2 my-sm-0 search-button" type="submit">Search</button>
+                  </form>
+                    <input class="form-control mr-sm-2 search-input" type="search" name="daterange" value="01/01/2023 - 01/02/2023" style="max-width: 230px;" />
               </div>
             </div>
           </nav>

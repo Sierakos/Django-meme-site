@@ -96,3 +96,18 @@ a:hover {
 .right-column {
     text-align: left;
 }
+
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  
+  .search-input {
+    margin-right: 10px;
+  }
+  
+  .search-button {
+    margin-left: 10px;
+    margin-right: 30px;
+  }
