@@ -5,10 +5,12 @@ from selenium.webdriver.support.color import Color
 from django.contrib.auth.models import User
 from uuid import uuid1
 
+PATH = "C:\Program Files (x86)\chromedriver.exe"
+
 class HostTest(TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(PATH)
         self.driver.implicitly_wait(5)
 
         self.driver.get('http://127.0.0.1:8000/')
@@ -24,7 +26,7 @@ class HostTest(TestCase):
 class LoginFormTest(TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(PATH)
 
         self.driver.implicitly_wait(5)
 
@@ -81,7 +83,7 @@ class LoginFormTest(TestCase):
 class RegisterFormTest(TestCase):
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(PATH)
         self.driver.implicitly_wait(5)
 
         self.driver.get('http://127.0.0.1:8000/auth/register/')
