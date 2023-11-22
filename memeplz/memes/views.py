@@ -37,6 +37,7 @@ def home_view(request):
         paginator = Paginator(posts, 5)
 
     top_ten_posts = Post.objects.filter(
+        is_on_main_page=True,
         created__gte=timezone.now()-timedelta(days=7)
     ).order_by('-likes')[:3]
 
