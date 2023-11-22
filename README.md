@@ -9,4 +9,5 @@ To run this web app you need to follow these steps:
 3: install all needed librares `pip install -r requirements.txt`  
 4: go to memeplz folder `cd memeplz`  
 5: make migration for creating database `py manage.py migrate`  
-6: run server `py manage.py runserver`  
+6: OPTIONAL create superuser `py manage.py createsuperuser`
+7: run server `py manage.py runserver`  
